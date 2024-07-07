@@ -1,41 +1,6 @@
+const fs = require("fs");
 const inquirer = require("inquirer");
 const generateLogo = require("./utils/generateLogo");
-const fs = require("fs");
-
-inquirer
-  .prompt([
-    {
-      type: "input",
-      name: "text",
-      message: "What text should go inside of the svg (at most 3 characters)?",
-      validate: function (answer) {
-        if (answer.length > 3) {
-          return false;
-        }
-        return true;
-      },
-    },
-    {
-      type: "input",
-      name: "textColor",
-      message:
-        "What color should the text be (must be a valid color or a hexadecimal)?",
-    },
-    {
-      type: "list",
-      name: "shape",
-      message: "What shape should the logo be?",
-      choices: ["circle", "triangle", "square"],
-    },
-    {
-      type: "input",
-      name: "shapeColor",
-      message: "What color should the svg be?",
-    },
-  ])
-  .then((answers) => {
-    console.log(answers);
-  });
 
 class Svg {
   constructor() {
@@ -53,21 +18,50 @@ class Svg {
   }
 }
 
-function toWriteFile(fileName, data) {
-  var content = generateLogo(data);
-  fs.toWriteFile(fileName, content, function (error) {
-    if (error) {
-      console.log(error);
-    }
-    console.log("Generated logo.svg");
+const questions = [
+  {
+    type: "input",
+    message:
+      "Please enter the text you would like displayed inside your logo! Text can be up to 3 letters.",
+    name: "text",
+  },
+  {
+    type: "input",
+    message:
+      "Please enter the color keyword(red, white, blue) or hexadecimal number(#8152bf) you would like the color of the text to be.",
+    name: "textColor",
+  },
+  {
+    type: "list",
+    message: "Please select the desired shape for your logo from the choices.",
+    name: "shape",
+    choices: ["circle", "triangle", "square"],
+  },
+  {
+    type: "input",
+    message:
+      "Please enter the color keyword(red, white, blue) or hexadecimal number(#8152bf) you would like the color of the shape to be.",
+    name: "shapeColor",
+  },
+];
+
+function writeToFile(fileName, data) {
+  fs.writeFile(fileName, JSON.stringify(data, null, 2), (err) => {
+    if (err) throw err;
+    console.log("The file has been saved!");
   });
 }
 
 function init() {
-  inquirer.createPromptModule(questions).then(function (data) {
-    var fileName = "logo.svg";
-    writeToFile(fileName, data);
-  });
+  const prompt = inquirer.createPromptModule();
+  prompt(questions)
+    .then(function (data) {
+      var fileName = "logo.svg";
+      writeToFile(fileName, data);
+    })
+    .catch(function (error) {
+      console.error("Error:", error);
+    });
 }
 
 init();

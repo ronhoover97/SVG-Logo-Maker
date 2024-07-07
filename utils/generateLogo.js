@@ -1,6 +1,6 @@
-const Square = require("..lib/Square");
-const Circle = require("..lib/Circle");
-const Triangle = require("..lib/Triangle");
+const Square = require("../lib/Square");
+const Circle = require("../lib/Circle");
+const Triangle = require("../lib/Triangle");
 
 function generateLogo(data) {
   let shape = undefined;
